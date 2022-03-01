@@ -40,6 +40,18 @@ public class PersonService {
 	public Person getPerson(Integer id) {
 		Optional<Person> found = this.repo.findById(id);
 		return found.get(); 
+		
+	}
+	
+	
+	public List<Person> getAllPeepsByAge(Integer age) {
+		List<Person> found = this.repo.findByAge(age);
+		return found;
+	}
+	
+	public List<Person> getPeepsByName(String name) {
+		List<Person> found = this.repo.findByNameIgnoreCase(name);
+		return found;
 	}
 
 	// UPDATE

@@ -17,7 +17,7 @@ public class Person {
 
 	@Column(nullable = false)
 	private String name;
-	@Column(unique = true)
+
 	private Integer age;
 
 	private Integer height;
