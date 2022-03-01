@@ -1,42 +1,59 @@
 package com.example.person.service;
 
-import java.util.ArrayList;
-import java.util.List;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.example.person.domain.Person;
+import com.example.person.repo.PersonRepo;
+
+
 
 @Service
 public class PersonService {
 
-	private List<Person> peeps = new ArrayList<>();
+	private PersonRepo repo;
+	
+	@Autowired
+	public PersonService(PersonRepo repo) {
+		super();
+		this.repo=repo;
+	}
+	
+	
 
 	// CREATE
 	public Person createPerson(Person p) {
-		this.peeps.add(p);
-		Person created = this.peeps.get(this.peeps.size() - 1);
+		Person created = this.repo.save(p);  //INSERT INTO Person;
 		return created;
 	}
 
 	// READ
 	public List<Person> getAllPeeps() {
-		return this.peeps;
+		return this.repo.findAll();
 	}
 
 	public Person getPerson(Integer id) {
-		return this.peeps.get(id);
+		Optional<Person> found = this.repo.findById(id);
+		return found.get(); 
 	}
 
 	// UPDATE
 	public Person replacePerson(Integer id, Person newPerson) {
-		Person body = this.peeps.set(id, newPerson);
-		return body;
+		Person existing = this.repo.findById(id).get();
+		existing.setAge(newPerson.getAge());
+		existing.setHeight(newPerson.getHeight());
+		existing.setName(newPerson.getName());
+		Person updated = this.repo.save(existing);
+		return updated;
 	}
 
 	// DELETE
 	public void removePerson(@PathVariable Integer id) {
-		this.peeps.remove(id.intValue());
+		this.repo.deleteById(id); //DELETE FROM Person WHERE id= 
 	}
 }
