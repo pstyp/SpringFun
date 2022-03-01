@@ -1,16 +1,26 @@
 package com.example.person.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+
+
+@Entity
 public class Person {
 
+	@Id //PRIMARY KEY
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO INCREMENT
 	private Integer id;
-	
+
+	@Column(nullable = false)
 	private String name;
-	
+	@Column(unique = true)
 	private Integer age;
-	
+
 	private Integer height;
-	
-	
 
 	public Person() {
 		super();
@@ -60,6 +70,5 @@ public class Person {
 	public String toString() {
 		return "Person [id=" + id + ", name=" + name + ", age=" + age + ", height=" + height + "]";
 	}
-	
-	
+
 }
