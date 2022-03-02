@@ -28,7 +28,7 @@ public class PersonService {
 
 	// CREATE
 	public Person createPerson(Person p) {
-		Person created = this.repo.save(p);  //INSERT INTO Person;
+		Person created = this.repo.save(p);  
 		return created;
 	}
 
