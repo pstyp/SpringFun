@@ -1,7 +1,9 @@
 package com.example.person.web;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @AutoConfigureMockMvc // sets up the MockMVC objects
 @Sql(scripts = { "classpath:person-schema.sql",
 		"classpath:person-data.sql" }, executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+@ActiveProfiles("test")
 public class PersonControllerIntegrationTest {
 
 	@Autowired // pull the MockMvc object from the context (like with @Service or @Repository)
@@ -60,5 +64,57 @@ public class PersonControllerIntegrationTest {
         ResultMatcher checkBody = content().json(json);
         
         this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+	}
+	@Test
+	void getTest() throws Exception {
+		RequestBuilder req = get("/get/1");
+		String personAsJson = this.mapper.writeValueAsString(new Person(1, "John", 60, 170));
+		ResultMatcher checkStatus = status().isOk();
+	    ResultMatcher checkBody = content().json(personAsJson);
+	    
+	    this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+	  	
+	        
+	}
+	
+	@Test
+	void getByNameTest() throws Exception {
+		RequestBuilder req = get("/getByName/John");
+		List<Person> testPeeps = List.of(new Person(1, "John", 60, 170));
+		String json = this.mapper.writeValueAsString(testPeeps);
+		ResultMatcher checkStatus = status().isOk();
+	    ResultMatcher checkBody = content().json(json);
+	    
+	    this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+	}
+	
+	@Test
+	void getByAgeTest() throws Exception {
+		RequestBuilder req = get("/getByAge/60");
+		List<Person> testPeeps = List.of(new Person(1, "John", 60, 170), new Person(2, "Anna Davey", 60, 175));
+		String json = this.mapper.writeValueAsString(testPeeps);
+		ResultMatcher checkStatus = status().isOk();
+	    ResultMatcher checkBody = content().json(json);
+	    
+	    this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+	}
+	
+	@Test
+	void testReplace() throws Exception {
+		Person testPerson = new Person(null, "Jake", 99, 100);
+		String testPersonAsJson = this.mapper.writeValueAsString(testPerson);
+		RequestBuilder req = put("/replace/1").contentType(MediaType.APPLICATION_JSON).content(testPersonAsJson);
+		
+		Person testCreatedPerson = new Person(1, "Jake", 99, 100);
+		String testCreatedPersonAsJSON = this.mapper.writeValueAsString(testCreatedPerson);
+		ResultMatcher checkStatus = status().isAccepted();
+		ResultMatcher checkBody = content().json(testCreatedPersonAsJSON);
+		
+		this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+		
+	}
+	@Test
+	void testRemove() throws Exception {
+		this.mvc.perform(delete("/remove/1")).andExpect(status().isNoContent());
 	}
 }
