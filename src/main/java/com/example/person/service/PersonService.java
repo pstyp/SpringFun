@@ -14,7 +14,7 @@ import com.example.person.repo.PersonRepo;
 
 
 @Service
-public class PersonService {
+public class PersonService implements ServiceIF<Person>{
 
 	private PersonRepo repo;
 	
@@ -27,17 +27,17 @@ public class PersonService {
 	
 
 	// CREATE
-	public Person createPerson(Person p) {
+	public Person create(Person p) {
 		Person created = this.repo.save(p);  
 		return created;
 	}
 
 	// READ
-	public List<Person> getAllPeeps() {
+	public List<Person> getAll() {
 		return this.repo.findAll();
 	}
 
-	public Person getPerson(Integer id) {
+	public Person getOne(Integer id) {
 		Optional<Person> found = this.repo.findById(id);
 		return found.get(); 
 		
@@ -55,7 +55,7 @@ public class PersonService {
 	}
 
 	// UPDATE
-	public Person replacePerson(Integer id, Person newPerson) {
+	public Person replace(Integer id, Person newPerson) {
 		Person existing = this.repo.findById(id).get();
 		existing.setAge(newPerson.getAge());
 		existing.setHeight(newPerson.getHeight());
@@ -65,7 +65,7 @@ public class PersonService {
 	}
 
 	// DELETE
-	public void removePerson(@PathVariable Integer id) {
+	public void remove(@PathVariable Integer id) {
 		this.repo.deleteById(id); //DELETE FROM Person WHERE id= 
 	}
 }

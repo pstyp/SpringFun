@@ -36,29 +36,29 @@ public class PersonController {
 	@PostMapping("/create") // @RequestBody pulls the parameter from the body of the request
 
 	public ResponseEntity<Person> createPerson(@RequestBody Person p) {
-		Person created = this.service.createPerson(p);
+		Person created = this.service.create(p);
 		ResponseEntity<Person> response = new ResponseEntity<Person>(created, HttpStatus.CREATED); // 201 - created
 		return response;
 	}
 	
 	@GetMapping("/getAll") 
 	public ResponseEntity<List<Person>> getAllPeeps() {
-		return ResponseEntity.ok(this.service.getAllPeeps()); //200 - ok
+		return ResponseEntity.ok(this.service.getAll()); //200 - ok
 	}
 	
 	@GetMapping("/get/{id}")  // 200 ok
 	public Person getPerson(@PathVariable Integer id) {
-		return this.service.getPerson(id);
+		return this.service.getOne(id);
 	}
 	@PutMapping("/replace/{id}") // 202 accepted
 	public ResponseEntity<Person> replacePerson(@PathVariable Integer id, @RequestBody Person newPerson) {
-		Person body = this.service.replacePerson(id, newPerson);
+		Person body = this.service.replace(id, newPerson);
 		ResponseEntity<Person> response = new ResponseEntity<Person>(body, HttpStatus.ACCEPTED);
 		return response;
 	}
 	@DeleteMapping("/remove/{id}") // 204 no content 
 	public ResponseEntity<?> removePerson(@PathVariable Integer id) {
-		this.service.removePerson(id);
+		this.service.remove(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
